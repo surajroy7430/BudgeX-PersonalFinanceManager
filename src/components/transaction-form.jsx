@@ -17,6 +17,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -28,6 +36,8 @@ const schema = z.object({
   amount: z.preprocess((val) => parseFloat(val), z.number().positive()),
   date: z.preprocess((val) => new Date(val), z.date()),
   icon: z.string().min(1),
+  paymentMethod: z.string().min(1),
+  description: z.string().optional(),
 });
 
 const TransactionForm = ({
@@ -36,8 +46,8 @@ const TransactionForm = ({
   submitLabel,
   handleDispathSubmit,
 }) => {
-  const [showPicker, setShowPicker] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState("");
+  const [showPicker, setShowPicker] = useState(false);
   const [open, setOpen] = useState(false);
 
   const form = useForm({
@@ -48,14 +58,19 @@ const TransactionForm = ({
       amount: "",
       date: new Date(),
       icon: "",
+      paymentMethod: "Other",
+      description: "",
     },
   });
+
+  const capitalize = (str) =>
+    str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 
   const onSubmit = (data) => {
     const { field, ...rest } = data;
     const payload = {
       ...rest,
-      [type === "income" ? "source" : "category"]: field,
+      [type === "income" ? "source" : "category"]: capitalize(field),
       date: format(data.date, "dd MMM yyyy"),
       type,
     };
@@ -65,6 +80,8 @@ const TransactionForm = ({
       amount: "",
       date: new Date(),
       icon: "",
+      paymentMethod: "Other",
+      description: "",
     });
     setSelectedIcon("");
   };
@@ -84,26 +101,31 @@ const TransactionForm = ({
           name="icon"
           render={() => (
             <FormItem className="flex gap-2">
-              <div className="flex items-center gap-2">
-                <FormControl>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setShowPicker((prev) => !prev)}
-                    className="w-10 h-10 p-0"
-                  >
-                    {selectedIcon || <Image />}
-                  </Button>
-                </FormControl>
-              </div>
-              <FormLabel>
-                {selectedIcon ? "Change Icon" : "Pick Icon"}
-              </FormLabel>
-              {showPicker && (
-                <div className="z-50">
-                  <EmojiPicker onEmojiClick={handleEmojiClick} height={350} />
-                </div>
-              )}
+              <FormControl>
+                <Popover open={showPicker} onOpenChange={setShowPicker}>
+                  <PopoverTrigger asChild>
+                    <div className="flex gap-2 items-center w-fit">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-10 h-10 p-0"
+                      >
+                        {selectedIcon || <Image />}
+                      </Button>
+                      <FormLabel>
+                        {selectedIcon ? "Change Icon" : "Pick Icon"}
+                      </FormLabel>
+                    </div>
+                  </PopoverTrigger>
+                  <PopoverContent className="p-0 w-64">
+                    <EmojiPicker
+                      onEmojiClick={handleEmojiClick}
+                      height={350}
+                      className="max-w-xs w-full"
+                    />
+                  </PopoverContent>
+                </Popover>
+              </FormControl>
             </FormItem>
           )}
         />
@@ -121,6 +143,7 @@ const TransactionForm = ({
                     type === "income" ? "salary, freelance" : "groceries, rent"
                   }`}
                   {...field}
+                  className="capitalize placeholder:lowercase"
                 />
               </FormControl>
             </FormItem>
@@ -189,6 +212,53 @@ const TransactionForm = ({
             </FormItem>
           )}
         />
+
+        {/* Payment Method */}
+        <FormField
+          control={form.control}
+          name="paymentMethod"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel>Payment Method</FormLabel>
+
+              <Select value={field.value} onValueChange={field.onChange}>
+                <FormControl className='w-full'>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select payment method" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="Card">Credit/Debit Card</SelectItem>
+                  <SelectItem value="Auto Debit">Auto Debit</SelectItem>
+                  <SelectItem value="Bank Transfer">Bank Transfer</SelectItem>
+                  <SelectItem value="UPI">UPI</SelectItem>
+                  <SelectItem value="Cash">Cash</SelectItem>
+                  <SelectItem value="Other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+            </FormItem>
+          )}
+        />
+
+        {/* Description (optional) */}
+        {type === "expenses" && (
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Description (Optional)</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder='add any notes'
+                    className="resize-none"
+                    {...field}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        )}
 
         <Button
           type="submit"

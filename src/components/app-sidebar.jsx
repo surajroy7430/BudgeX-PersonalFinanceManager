@@ -1,4 +1,4 @@
-import { Command, Goal, HandCoins, WalletMinimal } from "lucide-react";
+import { Command, Goal, HandCoins, SunMoon, WalletMinimal } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
@@ -27,6 +27,11 @@ const menuButtons = {
       title: "Expense",
       path: "/expenses",
       icon: HandCoins,
+    },
+    {
+      title: "Appearance",
+      path: "/appearance",
+      icon: SunMoon,
     },
     // {
     //   title: "Goals",

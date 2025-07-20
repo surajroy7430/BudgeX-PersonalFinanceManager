@@ -23,6 +23,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { auth, db } from "../firebase/firebaseConfig";
 import { createUserWithEmailAndPassword, signOut } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
 
 const formSchema = z.object({
   name: z.string().trim().min(3),
@@ -31,6 +33,7 @@ const formSchema = z.object({
 });
 
 export function SignupForm({ className, ...props }) {
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const form = useForm({
@@ -73,7 +76,7 @@ export function SignupForm({ className, ...props }) {
       <Card className="bg-white/70 text-black shadow-xl backdrop-blur-md backdrop-saturate-150 transition-all duration-300">
         <CardHeader className="text-center mb-3">
           <CardTitle className="text-xl font-bold">Create an Account</CardTitle>
-          <CardDescription>
+          <CardDescription className="text-black/50">
             Signup by entering your details below
           </CardDescription>
         </CardHeader>
@@ -97,6 +100,7 @@ export function SignupForm({ className, ...props }) {
                             type="text"
                             placeholder="Min 3 Characters"
                             {...field}
+                            className="selection:bg-gray-700 selection:text-white"
                           />
                         </FormControl>
                       </FormItem>
@@ -110,7 +114,11 @@ export function SignupForm({ className, ...props }) {
                       <FormItem>
                         <FormLabel>Email Address</FormLabel>
                         <FormControl>
-                          <Input placeholder="m@example.com" {...field} />
+                          <Input
+                            placeholder="m@example.com"
+                            {...field}
+                            className="selection:bg-gray-700 selection:text-white"
+                          />
                         </FormControl>
                       </FormItem>
                     )}
@@ -123,12 +131,32 @@ export function SignupForm({ className, ...props }) {
                     <FormItem>
                       <FormLabel>Password</FormLabel>
                       <FormControl>
-                        <Input
-                          type="password"
-                          placeholder="Min 8 Characters"
-                          autoComplete="off"
-                          {...field}
-                        />
+                        <div className="relative">
+                          <Input
+                            type={showPassword ? "text" : "password"}
+                            placeholder="Min 8 Characters"
+                            autoComplete="off"
+                            {...field}
+                            onCopy={(e) => e.preventDefault()}
+                            onPaste={(e) => e.preventDefault()}
+                            onContextMenu={(e) => e.preventDefault()}
+                            className="pr-10 selection:bg-transparent"
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setShowPassword((prev) => !prev)}
+                            tabIndex={-1}
+                            className="absolute right-1 top-1/2 -translate-y-1/2 shadow-none text-muted/70 hover:text-muted/50 dark:hover:!bg-accent/0"
+                          >
+                            {showPassword ? (
+                              <EyeOff size={5} />
+                            ) : (
+                              <Eye size={5} />
+                            )}
+                          </Button>
+                        </div>
                       </FormControl>
                     </FormItem>
                   )}
@@ -145,7 +173,7 @@ export function SignupForm({ className, ...props }) {
                 Already have an account?{" "}
                 <Link
                   to="/signin"
-                  className="hover:text-indigo-600 underline underline-offset-2"
+                  className="hover:text-indigo-700 underline underline-offset-2"
                 >
                   Sign in
                 </Link>

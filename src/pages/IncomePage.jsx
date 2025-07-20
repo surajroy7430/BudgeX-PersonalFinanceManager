@@ -1,17 +1,12 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Download, Plus, TrendingUp } from "lucide-react";
-import IncomeForm from "../components/income/IncomeForm";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { downloadIncome, getIncome } from "../features/income/incomeSlice";
+  deleteIncome,
+  downloadIncome,
+  getIncome,
+} from "../features/income/incomeSlice";
+import IncomeList from "../components/income/IncomeList";
+import IncomeOverviewChart from "../components/income/IncomeOverviewChart";
 
 const IncomePage = () => {
   const dispatch = useDispatch();
@@ -23,27 +18,13 @@ const IncomePage = () => {
   }, [dispatch]);
 
   return (
-    <div>
-      <Dialog>
-        <DialogTrigger className="dialog-trigger hover:text-green-500">
-          <Plus size={15} /> Add Income
-        </DialogTrigger>
-
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="pb-3 border-b flex gap-2">
-              Add Income <TrendingUp className="text-green-600" />
-            </DialogTitle>
-            <DialogDescription></DialogDescription>
-          </DialogHeader>
-
-          <IncomeForm />
-        </DialogContent>
-      </Dialog>
-
-      <Button variant="outline" onClick={() => dispatch(downloadIncome())}>
-        <Download /> Download
-      </Button>
+    <div className="grid grid-cols-1 gap-6">
+      <IncomeOverviewChart />
+      <IncomeList
+        transactions={income}
+        onDelete={(t) => dispatch(deleteIncome(t.id))}
+        onDownload={() => dispatch(downloadIncome())}
+      />
     </div>
   );
 };

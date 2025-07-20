@@ -22,19 +22,19 @@ const FinancialBarChart = ({ data, days }) => {
     }))
     .filter((item) => differenceInDays(today, item.parsedDate) <= days);
 
-  const barColor = (index) => (index % 2 === 0 ? "#4f46e5" : "#8884d8");
+  const barColor = (index) => (index % 2 === 0 ? "#4338ca" : "#6366f1");
 
   return (
     <ResponsiveContainer width="100%" height={300}>
       <BarChart data={daysData} barSize={50}>
-        <XAxis dataKey="date" tick={{ fontSize: 12 }} tickLine={false} />
+        <XAxis dataKey="date" tick={false} tickLine={false} />
         <YAxis tick={{ fontSize: 12 }} />
 
         <Tooltip content={<CustomTooltip />} />
 
         <CartesianGrid stroke="none" />
 
-        <Bar dataKey="amount" fill="#4f46e5" radius={[5, 5, 0, 0]}>
+        <Bar dataKey="amount" fill="#4338ca" radius={[5, 5, 0, 0]}>
           {data.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={barColor(index)} />
           ))}

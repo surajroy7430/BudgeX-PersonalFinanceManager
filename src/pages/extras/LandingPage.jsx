@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 
 const LandingPage = () => {
   const { user } = useAuth();
@@ -19,7 +19,7 @@ const LandingPage = () => {
 
   return (
     <div className="min-h-screen">
-      <nav className="flex justify-between items-center gap-6 px-4 py-3 fixed w-full bg-white z-50">
+      <nav className="flex justify-between items-center gap-6 px-4 py-3 fixed w-full bg-background z-50">
         <img src={logoUrl} alt="BudgeX" className="h-10 md:h-14" />
 
         <div className="flex gap-4">
@@ -34,7 +34,7 @@ const LandingPage = () => {
             <>
               <Link
                 to="/signin"
-                className="text-gray-500 ring-2 px-6 py-1 ring-indigo-600 rounded-full text-center hover:bg-indigo-600 hover:text-white transition"
+                className="text-muted-foreground ring-2 px-6 py-1 ring-indigo-600 rounded-full text-center hover:bg-indigo-600 hover:text-white transition"
               >
                 Sign in
               </Link>
@@ -52,11 +52,13 @@ const LandingPage = () => {
       <div className="flex flex-col-reverse lg:flex-row items-center justify-between px-6 lg:px-20 py-16">
         <div className="max-w-xl text-center lg:text-left">
           <h1 className="text-3xl sm:text-5xl mb-4 text-gray-800">
-            <span className="text-indigo-600 font-bold">The easiest way</span>{" "}
+            <span className="text-indigo-600 font-bold">The easiest way</span>
             <br />
-            to manage your finances
+            <span className="text-muted-foreground/90">
+              to manage your finances
+            </span>
           </h1>
-          <p className="text-gray-600 mb-20 sm:mb-16">
+          <p className="text-muted-foreground/80 mb-20 sm:mb-16">
             Track income, budget smartly, and reach your financial goals faster
             with BudgeX.
           </p>

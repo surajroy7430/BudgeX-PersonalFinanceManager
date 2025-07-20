@@ -1,7 +1,6 @@
 "use client";
 
-import { ChevronsUpDown, LogOut } from "lucide-react";
-
+import { ChevronsUpDown, LogOut, Settings } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -20,11 +19,13 @@ import {
 import { useUserInfo } from "../context/UserInfoContext";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase/firebaseConfig";
+import { useNavigate } from "react-router-dom";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
   const { name, email, photoUrl } = useUserInfo();
   const fallbackName = name?.charAt(0).toUpperCase();
+  const navigate = useNavigate();
 
   const handleLogout = async () => {
     await signOut(auth);
@@ -73,6 +74,11 @@ export function NavUser() {
                 </div>
               </div>
             </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => navigate('/settings')}>
+              <Settings />
+              Settings
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout}>
               <LogOut />

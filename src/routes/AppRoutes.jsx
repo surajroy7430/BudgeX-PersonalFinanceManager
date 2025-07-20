@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import LandingPage from "../pages/LandingPage";
+import LandingPage from "../pages/extras/LandingPage";
 import PublicRoute from "./PublicRoute";
 import PrivateRoute from "./PrivateRoute";
 import LoginPage from "../Auth/LoginPage";
@@ -8,6 +8,9 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import HomePage from "../pages/HomePage";
 import IncomePage from "../pages/IncomePage";
 import ExpensePage from "../pages/ExpensePage";
+import ErrorPage from "../pages/extras/ErrorPage";
+import SettingsPage from "../pages/extras/SettingsPage";
+import Appearance from "../pages/extras/Appearance";
 
 const AppRoutes = () => {
   return (
@@ -24,8 +27,12 @@ const AppRoutes = () => {
           <Route path="/dashboard" element={<HomePage />} />
           <Route path="/income" element={<IncomePage />} />
           <Route path="/expenses" element={<ExpensePage />} />
+          <Route path="/appearance" element={<Appearance />} />
+          <Route path="/settings" element={<SettingsPage />} />
         </Route>
       </Route>
+
+      <Route path="*" element={<ErrorPage />} />
     </Routes>
   );
 };

@@ -163,6 +163,12 @@ html {
 .recharts-legend-item-text {
   @apply text-sm !text-muted-foreground
 }
+.recharts-surface path[fill="#ccc"] {
+  @apply fill-muted/30
+}
+.recharts-surface path[stroke="#fff"] {
+  @apply stroke-muted
+}
 
 @layer base {
   * {

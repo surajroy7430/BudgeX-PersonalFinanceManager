@@ -17,7 +17,7 @@ const ExpenseTransactions = ({transactions}) => {
   return (
     <Card className="card">
       <div className="px-6 flex items-center justify-between">
-        <CardTitle className="text-lg">Expenses</CardTitle>
+        <CardTitle className="text-lg">Recent Expenses</CardTitle>
         <CardAction>
           <Button
             variant="secondary"

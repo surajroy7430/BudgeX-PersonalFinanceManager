@@ -24,16 +24,12 @@ const HomePage = () => {
     dispatch(getExpenses());
   }, [dispatch]);
 
-  const totalBalance = (totalIncome || 0) - (totalExpenses || 0);
+  const totalBalance = totalIncome ? totalIncome - (totalExpenses || 0) : 0;
 
   const parseDate = (dateStr) => parse(dateStr, "dd MMM yyyy", new Date());
   const allTransactions = [...incomeItems, ...expensesItems].sort(
     (a, b) => parseDate(b.date) - parseDate(a.date)
   );
-
-  // const totalBalance = balance.toLocaleString("en-IN") || 0;
-  // const totalIncome = income.toLocaleString("en-IN") || 0;
-  // const totalExpenses = expenses.toLocaleString("en-IN") || 0;
 
   return (
     <>
@@ -77,20 +73,29 @@ const HomePage = () => {
       </div>
 
       <div className="grid auto-rows-min gap-4 lg:grid-cols-2 space-y-2">
-        <RecentTransactions transactions={allTransactions} />
-        <FinancialOverview
-          totalBalance={totalBalance}
-          totalIncome={totalIncome}
-          totalExpenses={totalExpenses}
-        />
+        <div className="lg:col-span-2">
+          <FinancialOverview transactions={allTransactions} />
+        </div>
+
+        <div className="lg:col-span-2">
+          <RecentTransactions transactions={allTransactions} />
+        </div>
 
         {/* Income */}
-        <IncomeTransactions transactions={incomeItems} />
-        <IncomeOverview data={incomeItems} />
+        {incomeItems?.length > 0 && (
+          <>
+            <IncomeTransactions transactions={incomeItems} />
+            <IncomeOverview data={incomeItems} totalIncome={totalIncome} />
+          </>
+        )}
 
         {/* Expenses */}
-        <ExpenseTransactions transactions={expensesItems} />
-        <ExpensesOverview data={expensesItems} />
+        {expensesItems?.length > 0 && (
+          <>
+            <ExpenseTransactions transactions={expensesItems} />
+            <ExpensesOverview data={expensesItems} />
+          </>
+        )}
       </div>
     </>
   );

@@ -2,14 +2,20 @@ const CustomLegend = ({ payload }) => {
   if (!payload?.length) return null;
 
   return (
-    <div className="flex flex-wrap justify-center gap-2 space-y-6 mt-4">
-      {payload.map((entry, index) => (
-        <div key={`legend-${index}`} className="flex items-center space-x-2">
-          <div
-            className="w-3 h-3 rounded-full top-5"
-            style={{ background: entry.color }}
-          ></div>
-          <span className="text-sm font-medium text-muted-foreground">{entry.value}</span>
+    <div className="mx-6 space-y-2 text-sm">
+      {payload?.map((entry, index) => (
+        <div
+          key={`legend-${index}`}
+          className="flex items-center justify-between"
+        >
+          <div className="flex items-center gap-2">
+            <span
+              className="inline-block w-3 h-3 rounded-full"
+              style={{ background: entry.color }}
+            ></span>
+            <span className="text-muted-foreground">{entry.value}</span>
+          </div>
+          <span className="text-foreground font-medium">₹{entry.payload.amount.toLocaleString("en-IN")}</span>
         </div>
       ))}
     </div>

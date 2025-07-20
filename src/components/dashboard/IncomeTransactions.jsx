@@ -16,7 +16,7 @@ const IncomeTransactions = ({ transactions }) => {
   return (
     <Card className="card">
       <div className="px-6 flex items-center justify-between">
-        <CardTitle className="text-lg">Income</CardTitle>
+        <CardTitle className="text-lg">Recent Income</CardTitle>
         <CardAction>
           <Button
             variant="secondary"
