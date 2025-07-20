@@ -9,7 +9,6 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  --radius-full: var(--radius-full);
 
   --shadow-2xs: var(--shadow-2xs);
   --shadow-xs: var(--shadow-xs);
@@ -93,7 +92,6 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
   --radius: 0.625rem;
-  --radius-full: 1.3rem;
   --shadow-2xs: 0px 2px 4px 0px hsl(0 0% 0% / 0.1);
   --shadow-xs: 0px 2px 4px 0px hsl(0 0% 0% / 0.1);
   --shadow-sm: 0px 2px 4px 0px hsl(0 0% 0% / 0.2),
@@ -150,6 +148,20 @@ body {
 
 html {
   transition: background 0.3s, color 0.3s;
+}
+
+.card {
+  @apply bg-muted/50 shadow-md shadow-muted border-muted truncate;
+}
+.dialog-trigger {
+  @apply flex items-center gap-1 border rounded-md text-sm font-medium px-4 py-2 bg-accent/50 hover:bg-accent/70;
+}
+
+.recharts-default-legend {
+  @apply flex flex-wrap justify-center gap-2
+}
+.recharts-legend-item-text {
+  @apply text-sm !text-muted-foreground
 }
 
 @layer base {

@@ -1,11 +1,14 @@
-import { Routes, Route } from "react-router-dom";
+import AppRoutes from "./routes/AppRoutes";
+import { Toaster } from "@/components/ui/sonner";
 
-const App = () => {
+function App() {
   return (
-    <div>
-      <h1>Personal Finance Manager</h1>
+    <div className="scrollbar-thin scrollbar-thumb-zinc-500 scrollbar-track-zinc-800 h-screen overflow-y-auto">
+      <AppRoutes />
+
+      <Toaster position="top-right" richColors closeButton />
     </div>
   );
-};
+}
 
 export default App;

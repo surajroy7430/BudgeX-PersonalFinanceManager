@@ -1,0 +1,48 @@
+import { Card, CardAction, CardContent, CardTitle } from "@/components/ui/card";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
+import { deleteExpense } from "../../features/expenses/expenseSlice";
+import TransactionInfoCard from "../../Cards/dashboard/TransactionInfoCard";
+
+const ExpenseTransactions = ({transactions}) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handleDelete = (transaction) => {
+    dispatch(deleteExpense(transaction.id));
+  };
+
+  return (
+    <Card className="card">
+      <div className="px-6 flex items-center justify-between">
+        <CardTitle className="text-lg">Expenses</CardTitle>
+        <CardAction>
+          <Button
+            variant="secondary"
+            className="cursor-pointer"
+            onClick={() => navigate("/expenses")}
+          >
+            See All <ArrowRight />
+          </Button>
+        </CardAction>
+      </div>
+      <CardContent className="flex flex-col gap-4">
+        {transactions?.slice(0, 5)?.map((t) => (
+          <TransactionInfoCard
+            key={t.id}
+            icon={t.icon}
+            label={t.category}
+            amount={t.amount.toLocaleString("en-IN")}
+            date={t.date}
+            type={t.type}
+            onDelete={() => handleDelete(t)}
+          />
+        ))}
+      </CardContent>
+    </Card>
+  );
+};
+
+export default ExpenseTransactions;
