@@ -1,7 +1,13 @@
 import * as XLSX from "xlsx";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { getAuth } from "firebase/auth";
-import { doc, addDoc, collection, deleteDoc, getDocs } from "firebase/firestore";
+import {
+  doc,
+  addDoc,
+  collection,
+  deleteDoc,
+  getDocs,
+} from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
 import { parse } from "date-fns";
 
@@ -78,11 +84,15 @@ export const downloadIncome = createAsyncThunk(
         throw new Error("No income data to export");
       }
 
-      const cleanedData = incomeData.map(({ source, amount, date }) => ({
-        Source: source,
-        Amount: amount,
-        Date: date,
-      }));
+      const cleanedData = incomeData.map(
+        ({ source, amount, date, paymentMethod, description }) => ({
+          SOURCE: source,
+          AMOUNT: amount,
+          PAYMENT_METHOD: paymentMethod,
+          DESCRIPTION: description,
+          DATE: date,
+        })
+      );
 
       // Convert JSON to worksheet
       const workbook = XLSX.utils.book_new();
