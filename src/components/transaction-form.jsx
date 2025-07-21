@@ -28,8 +28,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import { CalendarIcon, Image } from "lucide-react";
 import { format } from "date-fns";
+import { PAYMENT_METHODS } from "../constants";
 
 const schema = z.object({
   field: z.string().trim().min(1),
@@ -44,6 +46,7 @@ const TransactionForm = ({
   type,
   fieldLabel,
   submitLabel,
+  options,
   handleDispathSubmit,
 }) => {
   const [selectedIcon, setSelectedIcon] = useState("");
@@ -66,24 +69,35 @@ const TransactionForm = ({
   const capitalize = (str) =>
     str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     const { field, ...rest } = data;
+
     const payload = {
       ...rest,
       [type === "income" ? "source" : "category"]: capitalize(field),
       date: format(data.date, "dd MMM yyyy"),
       type,
     };
-    handleDispathSubmit(payload);
-    form.reset({
-      field: "",
-      amount: "",
-      date: new Date(),
-      icon: "",
-      paymentMethod: "Other",
-      description: "",
-    });
-    setSelectedIcon("");
+
+    try {
+      await handleDispathSubmit(payload);
+      toast.success(`Added ${type} successfully!`, {
+        duration: 1200,
+      });
+
+      form.reset({
+        field: "",
+        amount: "",
+        date: new Date(),
+        icon: "",
+        paymentMethod: "Other",
+        description: "",
+      });
+      setSelectedIcon("");
+    } catch (error) {
+      toast.error("Failed to add transaction. Please try again.");
+      console.error("submit failed", error.message);
+    }
   };
 
   const handleEmojiClick = (emojiData) => {
@@ -138,13 +152,24 @@ const TransactionForm = ({
             <FormItem>
               <FormLabel>{fieldLabel}</FormLabel>
               <FormControl>
-                <Input
-                  placeholder={`e.g. ${
-                    type === "income" ? "salary, freelance" : "groceries, rent"
-                  }`}
-                  {...field}
-                  className="capitalize placeholder:lowercase"
-                />
+                <>
+                  <Input
+                    list="input-options"
+                    placeholder={`e.g. ${
+                      type === "income"
+                        ? "salary, freelance"
+                        : "groceries, rent"
+                    }`}
+                    autocomplete="off"
+                    {...field}
+                    className="capitalize placeholder:lowercase"
+                  />
+                  <datalist id="input-options">
+                    {options.map((option, i) => (
+                      <option key={i} value={option.value} />
+                    ))}
+                  </datalist>
+                </>
               </FormControl>
             </FormItem>
           )}
@@ -160,7 +185,7 @@ const TransactionForm = ({
               <FormControl>
                 <Input
                   {...field}
-                  placeholder="e.g. 5000"
+                  placeholder="e.g. 5000.00"
                   onChange={(e) => field.onChange(e.target.value)}
                 />
               </FormControl>
@@ -222,18 +247,17 @@ const TransactionForm = ({
               <FormLabel>Payment Method</FormLabel>
 
               <Select value={field.value} onValueChange={field.onChange}>
-                <FormControl className='w-full'>
+                <FormControl className="w-full">
                   <SelectTrigger>
                     <SelectValue placeholder="Select payment method" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="Card">Credit/Debit Card</SelectItem>
-                  <SelectItem value="Auto Debit">Auto Debit</SelectItem>
-                  <SelectItem value="Bank Transfer">Bank Transfer</SelectItem>
-                  <SelectItem value="UPI">UPI</SelectItem>
-                  <SelectItem value="Cash">Cash</SelectItem>
-                  <SelectItem value="Other">Other</SelectItem>
+                  {PAYMENT_METHODS.map((method, i) => (
+                    <SelectItem key={i} value={method.value}>
+                      {method.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </FormItem>
@@ -241,24 +265,22 @@ const TransactionForm = ({
         />
 
         {/* Description (optional) */}
-        {type === "expenses" && (
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Description (Optional)</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder='add any notes'
-                    className="resize-none"
-                    {...field}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-        )}
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Description (Optional)</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="add any notes"
+                  className="resize-none"
+                  {...field}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
 
         <Button
           type="submit"

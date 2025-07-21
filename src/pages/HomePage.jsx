@@ -33,7 +33,7 @@ const HomePage = () => {
 
   return (
     <>
-      <div className="grid auto-rows-min gap-4 lg:grid-cols-3 mb-4">
+      <div className="grid auto-rows-min gap-4 lg:grid-cols-3 mb-2">
         {/* Total Balance */}
         <BalanceCard
           icon={<Wallet />}
@@ -72,15 +72,12 @@ const HomePage = () => {
         />
       </div>
 
+      <div className="grid gap-4 grid-cols-1 mb-2">
+        <FinancialOverview transactions={allTransactions} />
+        <RecentTransactions transactions={allTransactions} />
+      </div>
+
       <div className="grid auto-rows-min gap-4 lg:grid-cols-2 space-y-2">
-        <div className="lg:col-span-2">
-          <FinancialOverview transactions={allTransactions} />
-        </div>
-
-        <div className="lg:col-span-2">
-          <RecentTransactions transactions={allTransactions} />
-        </div>
-
         {/* Income */}
         {incomeItems?.length > 0 && (
           <>

@@ -1,6 +1,7 @@
 import TransactionForm from "../transaction-form";
 import { useDispatch } from "react-redux";
 import { addIncome } from "../../features/income/incomeSlice";
+import { SOURCE_OPTIONS } from "../../constants";
 
 const IncomeForm = () => {
   const dispatch = useDispatch();
@@ -10,6 +11,7 @@ const IncomeForm = () => {
       type="income"
       fieldLabel="Income Source"
       submitLabel="Add Income"
+      options={SOURCE_OPTIONS}
       handleDispathSubmit={(data) => dispatch(addIncome(data))}
     />
   );

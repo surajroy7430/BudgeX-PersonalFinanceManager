@@ -47,7 +47,7 @@ const ThemeAppearance = () => {
           <div>
             <Label className="flex flex-col [&:has([data-state=checked])>div]:border-primary">
               <RadioGroupItem value="dark" className="sr-only" />
-              <div className="items-center rounded-md border-2 border-muted bg-popover p-1 hover:bg-accent hover:text-accent-foreground">
+              <div className="rounded-md border-2 border-muted bg-popover p-1 hover:bg-accent hover:text-accent-foreground">
                 <div className="space-y-2 rounded-sm bg-slate-950 p-2">
                   <div className="space-y-2 rounded-md bg-slate-800 p-2 shadow-sm">
                     <div className="h-2 w-[80px] rounded-lg bg-slate-400" />
@@ -72,9 +72,9 @@ const ThemeAppearance = () => {
       <Button
         type="button"
         onClick={() => setTheme(selectedTheme)}
-        className="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white cursor-pointer"
+        className="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white cursor-pointer max-w-[250px] w-full"
       >
-        Update preference
+        Update Preference
       </Button>
     </div>
   );

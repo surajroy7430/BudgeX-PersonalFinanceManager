@@ -1,4 +1,5 @@
-import { Card, CardAction, CardContent, CardTitle } from "@/components/ui/card";
+import { Card, CardAction, CardContent, CardTitle, CardHeader, CardDescription } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -21,7 +22,7 @@ const RecentTransactions = ({ transactions }) => {
 
   return (
     <Card className="card">
-      <div className="px-6 flex items-center justify-between">
+      <div className="flex items-center justify-between px-6">
         <CardTitle className="text-lg">Recent Transactions</CardTitle>
         <CardAction>
           <Button
@@ -33,6 +34,9 @@ const RecentTransactions = ({ transactions }) => {
           </Button>
         </CardAction>
       </div>
+
+      <Separator />
+
       <CardContent className="flex flex-col gap-4">
         {transactions?.slice(0, 5)?.map((t) => (
           <TransactionInfoCard

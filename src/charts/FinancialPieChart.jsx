@@ -33,7 +33,6 @@ const FinancialPieChart = ({ data, label, totalAmount, colors, days }) => {
             cy="50%"
             outerRadius={130}
             innerRadius={100}
-            paddingAngle={2}
             labelLine={false}
             isAnimationActive
           >

@@ -1,4 +1,5 @@
 import { Card } from "@/components/ui/card";
+import { toast } from "sonner";
 import {
   Minus,
   Plus,
@@ -24,8 +25,15 @@ const TransactionInfoCard = ({ icon, label, amount, date, type, onDelete }) => {
         <div className="flex items-center gap-2">
           {/* Delete button */}
           <button
-            onClick={onDelete}
-            className="hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+            onClick={async () => {
+              try {
+                onDelete();
+                toast.success("Transaction deleted!", { duration: 1200 });
+              } catch (error) {
+                toast.error("Failed to delete transaction");
+              }
+            }}
+            className="hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
           >
             <Trash2 size={18} />
           </button>
