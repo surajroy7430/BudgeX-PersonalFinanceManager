@@ -1,33 +1,50 @@
 import { format } from "date-fns";
+import { formatCurrency } from "@/lib/financialUtils";
 
 const CustomTooltip = ({ active, payload }) => {
   if (!active || !payload?.length) return null;
 
   return (
-    <div className="rounded-lg bg-muted px-4 py-2 shadow-md flex flex-col gap-2">
-      {payload?.map((entry, index) => {
-        const { originalDate, date } = entry.payload || {};
+    <div className="rounded-lg bg-background border px-2.5 py-1.5 grid items-start gap-1.5  min-w-[8rem] text-xs shadow-xl">
+      <div className="grid gap-1.5">
+        {payload?.map((entry, index) => {
+          const { date, originalDate, source, category, fill } =
+            entry.payload || {};
+          const { name, value, color } = entry || "Value";
 
-        return (
-          <div key={`tooptip-${index}`}>
-            <div className="text-xs font-semibold text-muted-foreground/70">
-              {date || (originalDate && format(new Date(originalDate), 'dd MMM yyyy'))}
-            </div>
+          const label = category || source || name || "Unknown";
+          const resolvedDate =
+            date ||
+            (originalDate && format(new Date(originalDate), "dd MMM yyyy"));
+          const indicatorColor = fill || color || "#ccc";
+
+          return (
             <div
-              className={`text-sm ${
-                entry.payload.type === "income" || entry.name === "Income"
-                  ? "text-green-600"
-                  : "text-red-500"
-              }`}
+              key={`tooptip-${index}`}
+              className="flex w-full flex-col items-stretch gap-1.5"
             >
-              {entry.payload.category || entry.payload.source || entry.name}:{" "}
-              <span className="font-medium text-muted-foreground">
-                ₹{entry.value}
-              </span>
+              <div className="text-xs font-semibold text-muted-foreground/70">
+                {resolvedDate}
+              </div>
+
+              {/* Row with indicator + label + amount */}
+              <div className="flex items-center justify-between leading-none gap-1.5">
+                <div className="flex items-center gap-1.5">
+                  <span
+                    className="shrink-0 h-2.5 w-2.5 rounded-xs"
+                    style={{ background: indicatorColor }}
+                  />
+                  <span className="text-muted-foreground">{label}</span>
+                </div>
+
+                <span className="text-foreground/80 font-medium tabular-nums">
+                  ₹{formatCurrency(value)}
+                </span>
+              </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
   );
 };

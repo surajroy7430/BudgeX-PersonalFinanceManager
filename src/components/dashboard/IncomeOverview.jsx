@@ -1,8 +1,8 @@
 import { memo, useMemo } from "react";
 import {
   Card,
-  CardContent,
   CardTitle,
+  CardContent,
   CardHeader,
   CardDescription,
 } from "@/components/ui/card";
@@ -13,12 +13,18 @@ import {
 import { useData } from "@/hooks/use-data";
 import IncomePieChart from "@/charts/IncomePieChart";
 
-const COLORS = ["#047857", "#ea580c", "#6d28d9", "#dc2626", "#f59e0b"];
+const COLORS = [
+  "var(--chart-1)",
+  "var(--chart-2)",
+  "var(--chart-3)",
+  "var(--chart-4)",
+  "var(--chart-5)",
+];
 const days = 60;
 
 const IncomeOverview = () => {
   const { income } = useData();
-  
+
   const filteredData = useMemo(
     () => getFilteredDataByDays(income, days),
     [income]
@@ -29,13 +35,13 @@ const IncomeOverview = () => {
   );
 
   return (
-    <Card className="card">
-      <CardHeader>
-        <CardTitle className="text-lg">Income Overview</CardTitle>
+    <Card className="flex flex-col">
+      <CardHeader className="items-center pb-0">
+        <CardTitle>Income Overview</CardTitle>
         <CardDescription>Total Income for Last {days} Days</CardDescription>
       </CardHeader>
 
-      <CardContent>
+      <CardContent className="flex-1 pb-0">
         <IncomePieChart
           data={filteredData}
           label="Total Income"
