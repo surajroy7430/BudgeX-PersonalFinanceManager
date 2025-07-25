@@ -8,11 +8,12 @@ const CustomTooltip = ({ active, payload }) => {
     <div className="rounded-lg bg-background border px-2.5 py-1.5 grid items-start gap-1.5  min-w-[8rem] text-xs shadow-xl">
       <div className="grid gap-1.5">
         {payload?.map((entry, index) => {
-          const { date, originalDate, source, category, fill } =
+          const { date, originalDate, source, displaySource, category, fill } =
             entry.payload || {};
           const { name, value, color } = entry || "Value";
 
-          const label = category || source || name || "Unknown";
+          const label =
+            category || source || displaySource || name || "Unknown";
           const resolvedDate =
             date ||
             (originalDate && format(new Date(originalDate), "dd MMM yyyy"));

@@ -3,7 +3,6 @@ import { Pie, PieChart, Cell, Label } from "recharts";
 import {
   ChartContainer,
   ChartTooltip,
-  ChartTooltipContent,
   ChartLegend,
   ChartLegendContent,
 } from "@/components/ui/chart";
@@ -11,14 +10,30 @@ import { formatCurrency } from "@/lib/financialUtils";
 import CustomTooltip from "@/charts/CustomTooltip";
 
 const IncomePieChart = ({ data, label, colors, totalAmount }) => {
+  const labeledData = useMemo(() => {
+    const countMap = {};
+    return data.map((entry) => {
+      const source = entry.source;
+      const count = (countMap[source] || 0) + 1;
+      countMap[source] = count;
+
+      return {
+        ...entry,
+        displaySource: count > 1 ? `${source} (${count})` : source,
+      };
+    });
+  }, [data]);
+
   const chartConfig = useMemo(() => {
+    const config = {
+      amount: { label: "Amount" },
+    };
+
     return {
-      amount: {
-        label: data[0].date,
-      },
+      config,
       ...Object.fromEntries(
-        data.map((entry, index) => [
-          entry.source,
+        labeledData.map((entry, index) => [
+          entry.displaySource,
           {
             label: entry.source,
             color: colors[index % colors.length],
@@ -26,7 +41,7 @@ const IncomePieChart = ({ data, label, colors, totalAmount }) => {
         ])
       ),
     };
-  }, [data]);
+  }, [labeledData]);
 
   if (!data?.length) {
     return (
@@ -49,16 +64,16 @@ const IncomePieChart = ({ data, label, colors, totalAmount }) => {
         <ChartLegend
           content={
             <ChartLegendContent
-              nameKey="source"
+              nameKey="displaySource"
               className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center mt-4"
             />
           }
           cursor={{ fill: "transparent" }}
         />
         <Pie
-          data={data}
+          data={labeledData}
           dataKey="amount"
-          nameKey="source"
+          nameKey="displaySource"
           innerRadius="60%"
           outerRadius="80%"
           strokeWidth={0.5}
