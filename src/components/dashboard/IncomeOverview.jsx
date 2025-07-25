@@ -13,13 +13,6 @@ import {
 import { useData } from "@/hooks/use-data";
 import IncomePieChart from "@/charts/IncomePieChart";
 
-const COLORS = [
-  "var(--chart-1)",
-  "var(--chart-2)",
-  "var(--chart-3)",
-  "var(--chart-4)",
-  "var(--chart-5)",
-];
 const days = 60;
 
 const IncomeOverview = () => {
@@ -44,8 +37,6 @@ const IncomeOverview = () => {
       <CardContent className="flex-1 pb-0">
         <IncomePieChart
           data={filteredData}
-          label="Total Income"
-          colors={COLORS}
           totalAmount={totalAmount}
         />
       </CardContent>

@@ -1,21 +1,42 @@
-import { memo, useCallback } from "react";
-import {
-  Bar,
-  BarChart,
-  Tooltip,
-  ResponsiveContainer,
-  XAxis,
-  Cell,
-  YAxis,
-  CartesianGrid,
-} from "recharts";
+import { memo, useMemo } from "react";
+import { useTheme } from "@/context/ThemeContext";
+import { Bar, BarChart, Cell, XAxis, YAxis, CartesianGrid } from "recharts";
+import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
+import { getColorsByIndex } from "@/lib/colorByIndex";
 import CustomTooltip from "@/charts/CustomTooltip";
 
-const ExpensesBarChart = ({ data }) => {
-  const barColor = useCallback(
-    (index) => (index % 2 === 0 ? "#4338ca" : "#6366f1"),
-    []
-  );
+const ExpensesBarChart = ({ data, mode }) => {
+  const { theme } = useTheme();
+  const tranformedData = useMemo(() => {
+    if (mode === "grouped") {
+      const grouped = {};
+
+      data.forEach((entry) => {
+        const date = entry.date;
+        if (!grouped[date]) grouped[date] = { date };
+
+        const key = entry.category || "Other";
+        grouped[date][key] = (grouped[date][key] || 0) + entry.amount;
+      });
+
+      return Object.values(grouped);
+    }
+
+    return data.map((entry, index) => ({
+      ...entry,
+      id: `${entry.date} ${index}`,
+      fill: getColorsByIndex(index),
+    }));
+  }, [data, mode]);
+
+  const categories = useMemo(() => {
+    if (mode !== "grouped") return [];
+    const keys = new Set();
+
+    data.forEach((entry) => keys.add(entry.category || "Other"));
+
+    return Array.from(keys);
+  }, [data, mode]);
 
   if (!data?.length) {
     return (
@@ -26,22 +47,39 @@ const ExpensesBarChart = ({ data }) => {
   }
 
   return (
-    <ResponsiveContainer width="100%" height={300}>
-      <BarChart data={data} barSize={50}>
-        <XAxis dataKey="date" tick={false} tickLine={false} />
+    <ChartContainer className="w-full aspect-square max-h-[380px]">
+      <BarChart data={tranformedData} accessibilityLayer barSize="10%">
+        <CartesianGrid vertical={false} />
+
+        <XAxis dataKey="date" tick={false} tickMargin={10} tickLine={false} />
         <YAxis tick={{ fontSize: 12 }} />
 
-        <Tooltip content={<CustomTooltip />} />
+        <ChartTooltip
+          content={<CustomTooltip />}
+          cursor={{ fill: "transparent" }}
+        />
 
-        <CartesianGrid stroke="none" />
-
-        <Bar dataKey="amount" fill="#4338ca" radius={[5, 5, 0, 0]}>
-          {data.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={barColor(index)} />
-          ))}
-        </Bar>
+        {mode === "grouped" ? (
+          categories.map((cat, idx) => (
+            <Bar
+              key={cat}
+              dataKey={cat}
+              stackId="a"
+              fill={getColorsByIndex(idx)}
+              radius={idx === 0 ? [0, 0, 0, 0] : [5, 5, 0, 0]}
+              stroke={theme === "dark" ? "#1a1a1a" : "#fff"}
+              strokeWidth={0.5}
+            />
+          ))
+        ) : (
+          <Bar dataKey="amount" radius={[5, 5, 0, 0]}>
+            {data.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={getColorsByIndex(index)} />
+            ))}
+          </Bar>
+        )}
       </BarChart>
-    </ResponsiveContainer>
+    </ChartContainer>
   );
 };
 

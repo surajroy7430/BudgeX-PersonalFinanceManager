@@ -4,19 +4,23 @@ import { formatCurrency } from "@/lib/financialUtils";
 const CustomTooltip = ({ active, payload }) => {
   if (!active || !payload?.length) return null;
 
+  const { date, originalDate } = payload[0]?.payload || {};
+  const resolvedDate =
+    date || (originalDate && format(new Date(originalDate), "dd MMM yyyy"));
+
   return (
     <div className="rounded-lg bg-background border px-2.5 py-1.5 grid items-start gap-1.5  min-w-[8rem] text-xs shadow-xl">
+      <div className="text-xs font-semibold text-muted-foreground/70">
+        {resolvedDate}
+      </div>
+      
       <div className="grid gap-1.5">
         {payload?.map((entry, index) => {
-          const { date, originalDate, source, displaySource, category, fill } =
-            entry.payload || {};
+          const { source, displaySource, category, fill } = entry.payload || {};
           const { name, value, color } = entry || "Value";
 
           const label =
             category || source || displaySource || name || "Unknown";
-          const resolvedDate =
-            date ||
-            (originalDate && format(new Date(originalDate), "dd MMM yyyy"));
           const indicatorColor = fill || color || "#ccc";
 
           return (
@@ -24,10 +28,6 @@ const CustomTooltip = ({ active, payload }) => {
               key={`tooptip-${index}`}
               className="flex w-full flex-col items-stretch gap-1.5"
             >
-              <div className="text-xs font-semibold text-muted-foreground/70">
-                {resolvedDate}
-              </div>
-
               {/* Row with indicator + label + amount */}
               <div className="flex items-center justify-between leading-none gap-1.5">
                 <div className="flex items-center gap-1.5">

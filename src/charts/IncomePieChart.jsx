@@ -7,9 +7,10 @@ import {
   ChartLegendContent,
 } from "@/components/ui/chart";
 import { formatCurrency } from "@/lib/financialUtils";
+import { getColorsByIndex } from "@/lib/colorByIndex";
 import CustomTooltip from "@/charts/CustomTooltip";
 
-const IncomePieChart = ({ data, label, colors, totalAmount }) => {
+const IncomePieChart = ({ data, totalAmount }) => {
   const labeledData = useMemo(() => {
     const countMap = {};
     return data.map((entry) => {
@@ -36,7 +37,7 @@ const IncomePieChart = ({ data, label, colors, totalAmount }) => {
           entry.displaySource,
           {
             label: entry.source,
-            color: colors[index % colors.length],
+            color: getColorsByIndex(index),
           },
         ])
       ),
@@ -65,10 +66,9 @@ const IncomePieChart = ({ data, label, colors, totalAmount }) => {
           content={
             <ChartLegendContent
               nameKey="displaySource"
-              className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center mt-4"
+              className="-translate-y-1.5 flex-wrap gap-1.5 *:basis-1/4 *:justify-center mt-4"
             />
           }
-          cursor={{ fill: "transparent" }}
         />
         <Pie
           data={labeledData}
@@ -79,7 +79,7 @@ const IncomePieChart = ({ data, label, colors, totalAmount }) => {
           strokeWidth={0.5}
         >
           {data.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+            <Cell key={`cell-${index}`} fill={getColorsByIndex(index)} />
           ))}
           <Label
             content={({ viewBox }) => {
@@ -102,7 +102,7 @@ const IncomePieChart = ({ data, label, colors, totalAmount }) => {
                     y={viewBox.cy + 20}
                     className="fill-muted-foreground/60 text-sm"
                   >
-                    {label}
+                    Total Income
                   </tspan>
                 </text>
               );
