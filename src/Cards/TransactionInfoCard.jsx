@@ -1,7 +1,10 @@
+import { memo } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
+import { useActions } from "@/hooks/use-actions";
+import { formatCurrency } from "@/lib/financialUtils";
+import { DropdownMenuSeparator } from "@radix-ui/react-dropdown-menu";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -22,42 +25,58 @@ import {
   TrendingUp,
   Utensils,
 } from "lucide-react";
-import { DropdownMenuSeparator } from "@radix-ui/react-dropdown-menu";
 
-const AllTransactionsCard = ({
-  icon,
-  label,
-  amount,
-  date,
-  type,
-  paymentMethod,
-  description,
+const TransactionInfoCard = ({
+  data,
   onEdit,
-  onDelete,
+  showMethod = true,
+  showDescription = true,
 }) => {
+  const { handleDelete } = useActions();
+  if (!data) return null;
+
+  const {
+    icon,
+    type,
+    date,
+    amount,
+    source,
+    category,
+    description,
+    paymentMethod,
+  } = data;
+
+  const isIncome = type === "income";
+  const label = isIncome ? source : category;
+
+  const AmountIcon = isIncome ? Plus : Minus;
+  const TrendIcon = isIncome ? TrendingUp : TrendingDown;
+
   return (
-    <Card className="group relative flex-row items-center gap-4 p-3 cursor-default rounded-lg border-none shadow-none bg-muted/80 hover:bg-muted">
+    <Card className="group relative flex-row items-center gap-4 p-3 rounded-lg border-none shadow-none bg-muted/80 hover:bg-muted">
       {/* Icon */}
       <div className="w-10 h-10 flex items-center justify-center bg-muted-foreground/20 text-white text-lg rounded-full">
-        {icon || <Utensils className="w-6 h-6" />}
+        {icon || <Utensils className="w-5 h-5" />}
       </div>
 
       {/* Content */}
       <div className="flex-1 flex items-center justify-between">
-        {/* Info + Tooltip */}
+        {/* Info */}
         <div className="flex flex-col">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <p
                   className={`text-sm opacity-80 font-medium ${
-                    description && "cursor-help"
+                    showDescription && description && "cursor-help"
                   }`}
                 >
                   {label}
                 </p>
               </TooltipTrigger>
-              {description && (
+
+              {/* Tooltip */}
+              {showDescription && description && (
                 <TooltipContent>
                   <p className="max-w-[200px] text-xs">{description}</p>
                 </TooltipContent>
@@ -65,35 +84,30 @@ const AllTransactionsCard = ({
             </Tooltip>
           </TooltipProvider>
           <p className="text-xs opacity-60 mt-1">{date}</p>
-          <Badge
-            variant="default"
-            className="w-fit text-[10px] px-2 py-0.5 
+
+          {/* Payment Method */}
+          {showMethod && paymentMethod && (
+            <Badge
+              variant="default"
+              className="w-fit text-[10px] px-2 py-0.5 
                 sm:absolute sm:top-1/2 sm:-translate-y-1/2 sm:left-52 sm:mt-0 mt-1"
-          >
-            {paymentMethod}
-          </Badge>
+            >
+              {paymentMethod}
+            </Badge>
+          )}
         </div>
 
         {/* Amount + Menu */}
         <div className="flex items-center gap-2 justify-end w-auto">
-          {/* Income/Expense badge */}
-          <div
-            className={`flex items-center gap-1 px-3 py-1.5 rounded-md text-xs font-medium ${
-              type === "income"
-                ? "bg-chart-2/10 text-chart-2"
-                : "bg-destructive/10 text-destructive"
-            }`}
+          {/* Income/Expense Amlunt Badge */}
+          <Badge
+            variant={isIncome ? "income" : "expense"}
+            className="px-3 py-1.5"
           >
-            {/* <h6 className="text-xs font-medium flex items-center gap-1"> */}
-            {type === "income" ? <Plus size={15} /> : <Minus size={15} />}{" "}
-            {`₹${amount}`}
-            {/* </h6> */}
-            {type === "income" ? (
-              <TrendingUp size={18} />
-            ) : (
-              <TrendingDown size={18} />
-            )}
-          </div>
+            <AmountIcon size={15} />
+            {`₹${formatCurrency(amount)}`}
+            <TrendIcon size={18} />
+          </Badge>
 
           {/* Edit/Delete Dropdown menu */}
           <DropdownMenu>
@@ -108,18 +122,13 @@ const AllTransactionsCard = ({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-32">
-              <DropdownMenuItem onClick={onEdit}>Edit</DropdownMenuItem>
+              <DropdownMenuItem onClick={onEdit}>
+                Edit
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 variant="destructive"
-                onClick={async () => {
-                  try {
-                    onDelete();
-                    toast.success("Transaction deleted!", { duration: 1200 });
-                  } catch (error) {
-                    toast.error("Failed to delete transaction");
-                  }
-                }}
+                onClick={() => handleDelete(data)}
               >
                 Delete
               </DropdownMenuItem>
@@ -131,4 +140,4 @@ const AllTransactionsCard = ({
   );
 };
 
-export default AllTransactionsCard;
+export default memo(TransactionInfoCard);

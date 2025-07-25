@@ -1,18 +1,16 @@
-import { Card, CardAction, CardContent, CardTitle } from "@/components/ui/card";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { memo } from "react";
 import { ArrowRight } from "lucide-react";
-import { deleteExpense } from "../../features/expenses/expenseSlice";
-import TransactionInfoCard from "../../Cards/dashboard/TransactionInfoCard";
+import { useNavigate } from "react-router-dom";
+import { useData } from "@/hooks/use-data";
+import { useActions } from "@/hooks/use-actions";
+import { Button } from "@/components/ui/button";
+import { Card, CardAction, CardContent, CardTitle } from "@/components/ui/card";
+import TransactionInfoCard from "@/Cards/TransactionInfoCard";
 
-const ExpenseTransactions = ({transactions}) => {
+const ExpenseTransactions = () => {
+  const { expenses } = useData();
+  const { handleDelete } = useActions();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-
-  const handleDelete = (transaction) => {
-    dispatch(deleteExpense(transaction.id));
-  };
 
   return (
     <Card className="card">
@@ -28,16 +26,15 @@ const ExpenseTransactions = ({transactions}) => {
           </Button>
         </CardAction>
       </div>
+
       <CardContent className="flex flex-col gap-4">
-        {transactions?.slice(0, 5)?.map((t) => (
+        {expenses?.slice(0, 5)?.map((exp) => (
           <TransactionInfoCard
-            key={t.id}
-            icon={t.icon}
-            label={t.category}
-            amount={t.amount.toLocaleString("en-IN")}
-            date={t.date}
-            type={t.type}
-            onDelete={() => handleDelete(t)}
+            key={exp.id}
+            data={exp}
+            showMethod={false}
+            showDescription={false}
+            onDelete={() => handleDelete(exp)}
           />
         ))}
       </CardContent>
@@ -45,4 +42,4 @@ const ExpenseTransactions = ({transactions}) => {
   );
 };
 
-export default ExpenseTransactions;
+export default memo(ExpenseTransactions);

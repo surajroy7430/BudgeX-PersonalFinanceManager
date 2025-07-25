@@ -1,3 +1,4 @@
+import { memo } from "react";
 import {
   Pie,
   PieChart,
@@ -6,27 +7,25 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
-import CustomTooltip from "./CustomTooltip";
-import { differenceInDays, parse } from "date-fns";
-import CustomLegend from "./CustomLegend";
+import { formatCurrency } from "@/lib/financialUtils";
+import CustomTooltip from "@/charts/CustomTooltip";
+import CustomLegend from "@/charts/CustomLegend";
 
-const FinancialPieChart = ({ data, label, totalAmount, colors, days }) => {
-  const today = new Date();
-
-  // parse and filter last 30 Days
-  const filteredData = data
-    .map((item) => ({
-      ...item,
-      parsedDate: parse(item.date, "dd MMM yyyy", new Date()),
-    }))
-    .filter((item) => differenceInDays(today, item.parsedDate) <= days);
+const IncomePieChart = ({ data, label, colors, totalAmount }) => {
+  if (!data?.length) {
+    return (
+      <div className="text-center text-muted-foreground text-sm sm:text-base">
+        No data to show. <br /> Add transactions to check the data.
+      </div>
+    );
+  }
 
   return (
     <div className="relative">
       <ResponsiveContainer width="100%" height={380}>
         <PieChart>
           <Pie
-            data={filteredData}
+            data={data}
             dataKey="amount"
             nameKey={label === "Total Income" ? "source" : "category"}
             cx="50%"
@@ -51,7 +50,7 @@ const FinancialPieChart = ({ data, label, totalAmount, colors, days }) => {
 
       <div className="absolute mb-10 inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
         <span className="text-3xl font-bold text-foreground">
-          ₹{totalAmount.toLocaleString("en-IN")}
+          ₹{formatCurrency(totalAmount)}
         </span>
         <span className="text-sm text-muted-foreground">{label}</span>
       </div>
@@ -59,4 +58,4 @@ const FinancialPieChart = ({ data, label, totalAmount, colors, days }) => {
   );
 };
 
-export default FinancialPieChart;
+export default memo(IncomePieChart);

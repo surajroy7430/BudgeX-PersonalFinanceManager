@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { useTheme } from "../context/ThemeContext";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { memo, useState } from "react";
+import { useTheme } from "@/context/ThemeContext";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const ThemeAppearance = () => {
   const { theme, setTheme } = useTheme();
@@ -80,4 +80,4 @@ const ThemeAppearance = () => {
   );
 };
 
-export default ThemeAppearance;
+export default memo(ThemeAppearance);

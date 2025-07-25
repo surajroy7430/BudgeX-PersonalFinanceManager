@@ -1,5 +1,6 @@
 "use client";
 
+import { useUserInfo } from "@/context/UserInfoContext";
 import { ChevronsUpDown, LogOut, Settings } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -16,20 +17,16 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { useUserInfo } from "../context/UserInfoContext";
-import { signOut } from "firebase/auth";
-import { auth } from "../firebase/firebaseConfig";
-import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 
 export function NavUser() {
+  const { logout } = useAuth();
   const { isMobile } = useSidebar();
   const { name, email, photoUrl } = useUserInfo();
   const fallbackName = name?.charAt(0).toUpperCase();
-  const navigate = useNavigate();
 
   const handleLogout = async () => {
-    await signOut(auth);
-    document.documentElement.classList.remove("dark", "light");
+    await logout();
   };
 
   return (
@@ -43,11 +40,11 @@ export function NavUser() {
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={photoUrl || ""} alt={fallbackName} />
-                <AvatarFallback className="rounded-lg bg-indigo-500 text-white font-medium">
+                <AvatarFallback className="rounded-lg bg-primary text-white font-medium">
                   {fallbackName}
                 </AvatarFallback>
               </Avatar>
-              <div className="grid flex-1 text-left text-sm leading-tight">
+              <div className="grid flex-1 text-left text-sm leading-tight text-accent-foreground/80">
                 <span className="truncate font-medium">{name}</span>
                 <span className="truncate text-xs">{email}</span>
               </div>
@@ -64,11 +61,11 @@ export function NavUser() {
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage src={photoUrl || ""} alt={fallbackName} />
-                  <AvatarFallback className="rounded-lg bg-indigo-500 text-white font-medium">
+                  <AvatarFallback className="rounded-lg bg-primary text-white font-medium">
                     {fallbackName}
                   </AvatarFallback>
                 </Avatar>
-                <div className="grid flex-1 text-left text-sm leading-tight">
+                <div className="grid flex-1 text-left text-sm leading-tight text-accent-foreground/70">
                   <span className="truncate font-medium">{name}</span>
                   <span className="truncate text-xs">{email}</span>
                 </div>
@@ -80,7 +77,7 @@ export function NavUser() {
               Settings
             </DropdownMenuItem> */}
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout}>
+            <DropdownMenuItem onClick={handleLogout} variant="destructive">
               <LogOut />
               Log out
             </DropdownMenuItem>

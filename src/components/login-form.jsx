@@ -1,4 +1,6 @@
 import { cn } from "@/lib/utils";
+import { memo, useCallback, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -18,25 +20,23 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { Eye, EyeOff } from "lucide-react";
 import {
   GoogleAuthProvider,
   signInWithEmailAndPassword,
   signInWithPopup,
   signInWithRedirect,
 } from "firebase/auth";
-import { auth, db } from "../firebase/firebaseConfig";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
+import { auth, db } from "@/firebase/firebaseConfig";
 
 const formSchema = z.object({
   email: z.string().trim().email(),
   password: z.string().trim().min(8),
 });
 
-export function LoginForm({ className, ...props }) {
+const LoginForm = ({ className, ...props }) => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
@@ -49,30 +49,31 @@ export function LoginForm({ className, ...props }) {
     },
   });
 
-  const onSubmit = async (data) => {
-    try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        data.email,
-        data.password
-      );
-      const user = userCredential.user;
+  const onSubmit = useCallback(
+    async (data) => {
+      try {
+        const userCredential = await signInWithEmailAndPassword(
+          auth,
+          data.email,
+          data.password
+        );
+        const user = userCredential.user;
 
-      const userRef = doc(db, "users", user.uid);
-      const userSnap = await getDoc(userRef);
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
 
-      form.reset();
-      toast.success("Logged in successfully!", { duration: 1200 });
+        form.reset();
+        toast.success("Logged in successfully!", { duration: 1500 });
 
-      if (userSnap.exists()) {
-        navigate("/dashboard");
+        if (userSnap.exists()) navigate("/dashboard");
+      } catch (error) {
+        toast.error(error.message);
       }
-    } catch (error) {
-      toast.error(error.message);
-    }
-  };
+    },
+    [form, navigate]
+  );
 
-  const handleGoogleLogin = async () => {
+  const handleGoogleLogin = useCallback(async () => {
     let provider = new GoogleAuthProvider();
     provider.setCustomParameters({
       prompt: "select_account",
@@ -92,22 +93,19 @@ export function LoginForm({ className, ...props }) {
         });
       }
 
-      if (userSnap.exists()) {
-        navigate("/dashboard");
-      }
-
-      toast.success("Logged in with Google!", { duration: 1200 });
+      toast.success("Logged in with Google!", { duration: 1500 });
+      if (userSnap.exists()) navigate("/dashboard");
     } catch (error) {
       toast.error(error.message);
     }
-  };
+  }, [navigate]);
 
   return (
     <div className={cn("flex flex-col gap-6 ", className)} {...props}>
-      <Card className="bg-white/70 text-black shadow-xl backdrop-blur-md backdrop-saturate-150 transition-all duration-300">
+      <Card className="bg-card/80 shadow-xl backdrop-blur-md backdrop-saturate-150 transition-all duration-300">
         <CardHeader className="text-center mb-3">
           <CardTitle className="text-xl font-bold">Welcome Back</CardTitle>
-          <CardDescription className="text-black/50">
+          <CardDescription>
             Please enter your details to sign in
           </CardDescription>
         </CardHeader>
@@ -129,7 +127,6 @@ export function LoginForm({ className, ...props }) {
                         <Input
                           placeholder="m@example.com"
                           {...field}
-                          className="selection:bg-gray-700 selection:text-white"
                         />
                       </FormControl>
                     </FormItem>
@@ -159,7 +156,7 @@ export function LoginForm({ className, ...props }) {
                             size="icon"
                             onClick={() => setShowPassword((prev) => !prev)}
                             tabIndex={-1}
-                            className="absolute right-1 top-1/2 -translate-y-1/2 shadow-none text-muted/70 hover:text-muted/50 dark:hover:!bg-accent/0"
+                            className="absolute right-1 top-1/2 -translate-y-1/2 shadow-none hover:bg-accent/0 dark:hover:!bg-accent/0"
                           >
                             {showPassword ? (
                               <EyeOff size={5} />
@@ -173,14 +170,15 @@ export function LoginForm({ className, ...props }) {
                   )}
                 />
                 <Button
+                  variant="default"
                   type="submit"
-                  className="w-full text-white bg-indigo-600 hover:bg-indigo-700 cursor-pointer"
+                  className="w-full cursor-pointer py-5.5"
                 >
                   Sign In
                 </Button>
 
                 <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
-                  <span className="bg-white/40 text-muted-foreground relative rounded z-10 px-2">
+                  <span className="bg-card/80 dark:bg-card/0 text-muted-foreground relative rounded z-10 px-2 py-0.5">
                     OR
                   </span>
                 </div>
@@ -199,29 +197,29 @@ export function LoginForm({ className, ...props }) {
                     <path
                       fill="#fbbb00"
                       d="M113.47,309.408L95.648,375.94l-65.139,1.378C11.042,341.211,0,299.9,0,256
-                c0-42.451,10.324-82.483,28.624-117.732h0.014l57.992,10.632l25.404,57.644c-5.317,15.501-8.215,32.141-8.215,49.456
-                C103.821,274.792,107.225,292.797,113.47,309.408z"
+                        c0-42.451,10.324-82.483,28.624-117.732h0.014l57.992,10.632l25.404,57.644c-5.317,15.501-8.215,32.141-8.215,49.456
+                        C103.821,274.792,107.225,292.797,113.47,309.408z"
                     />
                     <path
                       fill="#518ef8"
                       d="M507.527,208.176C510.467,223.662,512,239.655,512,256c0,18.328-1.927,36.206-5.598,53.451
-                c-12.462,58.683-45.025,109.925-90.134,146.187l-0.014-0.014l-73.044-3.727l-10.338-64.535
-                c29.932-17.554,53.324-45.025,65.646-77.911h-136.89V208.176h138.887L507.527,208.176L507.527,208.176z"
+                        c-12.462,58.683-45.025,109.925-90.134,146.187l-0.014-0.014l-73.044-3.727l-10.338-64.535
+                        c29.932-17.554,53.324-45.025,65.646-77.911h-136.89V208.176h138.887L507.527,208.176L507.527,208.176z"
                     />
                     <path
                       fill="#28b446"
                       d="M416.253,455.624l0.014,0.014C372.396,490.901,316.666,512,256,512
-                c-97.491,0-182.252-54.491-225.491-134.681l82.961-67.91c21.619,57.698,77.278,98.771,142.53,98.771
-                c28.047,0,54.323-7.582,76.87-20.818L416.253,455.624z"
+                        c-97.491,0-182.252-54.491-225.491-134.681l82.961-67.91c21.619,57.698,77.278,98.771,142.53,98.771
+                        c28.047,0,54.323-7.582,76.87-20.818L416.253,455.624z"
                     />
                     <path
                       fill="#f14336"
                       d="M419.404,58.936l-82.933,67.896c-23.335-14.586-50.919-23.012-80.471-23.012
-                c-66.729,0-123.429,42.957-143.965,102.724l-83.397-68.276h-0.014C71.23,56.123,157.06,0,256,0
-                C318.115,0,375.068,22.126,419.404,58.936z"
+                        c-66.729,0-123.429,42.957-143.965,102.724l-83.397-68.276h-0.014C71.23,56.123,157.06,0,256,0
+                        C318.115,0,375.068,22.126,419.404,58.936z"
                     />
                   </svg>
-                  <span className="text-black">Sign in with Google</span>
+                  <span>Sign in with Google</span>
                 </Button>
               </div>
 
@@ -229,7 +227,7 @@ export function LoginForm({ className, ...props }) {
                 Don&apos;t have an account?{" "}
                 <Link
                   to="/signup"
-                  className="hover:text-indigo-700 underline underline-offset-2"
+                  className="text-muted-foreground/70 hover:text-primary underline underline-offset-3"
                 >
                   Sign up
                 </Link>
@@ -240,4 +238,6 @@ export function LoginForm({ className, ...props }) {
       </Card>
     </div>
   );
-}
+};
+
+export default memo(LoginForm);

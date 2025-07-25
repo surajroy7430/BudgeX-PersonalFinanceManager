@@ -1,7 +1,3 @@
-import { Command, Goal, HandCoins, SunMoon, WalletMinimal } from "lucide-react";
-
-import { NavMain } from "@/components/nav-main";
-import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -9,7 +5,16 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { DashboardLogo } from "./dashboard-logo";
+import {
+  BanknoteArrowDown,
+  BanknoteArrowUp,
+  Command,
+  Goal,
+  SunMoon,
+} from "lucide-react";
+import { NavMain } from "@/components/nav-main";
+import { NavUser } from "@/components/nav-user";
+import { DashboardLogo } from "@/components/dashboard-logo";
 
 const menuButtons = {
   navMain: [
@@ -21,12 +26,12 @@ const menuButtons = {
     {
       title: "Income",
       path: "/income",
-      icon: WalletMinimal,
+      icon: BanknoteArrowDown,
     },
     {
       title: "Expense",
       path: "/expenses",
-      icon: HandCoins,
+      icon: BanknoteArrowUp,
     },
     {
       title: "Appearance",

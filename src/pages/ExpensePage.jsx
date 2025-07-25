@@ -1,30 +1,17 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  deleteExpense,
-  downloadExpenses,
-  getExpenses,
-} from "../features/expenses/expenseSlice";
-import ExpensesList from "../components/expenses/ExpensesList";
-import FinancialTypeOverviewChart from "../charts/FinancialTypeOverviewChart";
+import { useData } from "@/hooks/use-data";
+import FinancialTypeOverviewChart from "@/charts/FinancialTypeOverviewChart";
+import TransactionList from "@/Cards/TransactionList";
 
 const ExpensePage = () => {
-  const dispatch = useDispatch();
-  const expenses = useSelector((state) => state.expenses.items);
-
-  useEffect(() => {
-    dispatch(getExpenses());
-  }, [dispatch]);
+  const { expenses } = useData();
 
   return (
     <div className="grid grid-cols-1 gap-6">
-      <FinancialTypeOverviewChart transactions={expenses} type='expenses' />
+      <FinancialTypeOverviewChart transactions={expenses} type="expenses" />
 
-      <ExpensesList
-        transactions={expenses}
-        onDelete={(t) => dispatch(deleteExpense(t.id))}
-        onDownload={() => dispatch(downloadExpenses())}
-      />
+      {expenses.length > 0 && (
+        <TransactionList data={expenses} type="expenses" />
+      )}
     </div>
   );
 };

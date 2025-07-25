@@ -1,7 +1,8 @@
+import { memo } from "react";
+import { Outlet } from "react-router-dom";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { Outlet } from "react-router-dom";
-import Header from "./Header";
+import Header from "@/layouts/Header";
 
 const DashboardLayout = () => {
   return (
@@ -18,4 +19,4 @@ const DashboardLayout = () => {
   );
 };
 
-export default DashboardLayout;
+export default memo(DashboardLayout);

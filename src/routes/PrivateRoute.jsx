@@ -1,25 +1,24 @@
-import { useAuth } from "../context/AuthContext";
 import { Navigate, Outlet } from "react-router-dom";
-import { UserInfoProvider } from "../context/UserInfoContext";
+import { useAuth } from "@/context/AuthContext";
+import { UserInfoProvider } from "@/context/UserInfoContext";
+import { PageLoader } from "@/components/page-loader";
 
 const PrivateRoute = () => {
-  const { user, loading } = useAuth();
+  const { user, loading, signupInProgress } = useAuth();
 
-  return (
-    <>
-      {loading ? (
-        <div className="flex h-screen items-center justify-center">
-          <span className="text-muted-foreground">Loading...</span>
-        </div>
-      ) : user ? (
-        <UserInfoProvider>
-          <Outlet />
-        </UserInfoProvider>
-      ) : (
-        <Navigate to="/signin" replace />
-      )}
-    </>
-  );
+  if (loading || signupInProgress) {
+    return <PageLoader />;
+  }
+
+  if (user) {
+    return (
+      <UserInfoProvider>
+        <Outlet />
+      </UserInfoProvider>
+    );
+  }
+
+  return <Navigate to="/signin" replace />;
 };
 
 export default PrivateRoute;

@@ -1,9 +1,11 @@
+import { memo, useMemo, useCallback, useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
-  PaginationNext,
-  PaginationPrevious,
 } from "@/components/ui/pagination";
 import {
   Select,
@@ -12,96 +14,126 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from "lucide-react";
 
-const PaginationControl = ({
-  currentPage,
-  totalPages,
-  onPageChange,
-  pageSize,
-  onPageSizeChange,
-}) => {
+const PaginationControl = ({ data = [], defaultPageSize = 5, children }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(defaultPageSize);
+
+  const totalPages = Math.ceil(data.length / pageSize);
+
+  const paginatedData = useMemo(
+    () => data.slice((currentPage - 1) * pageSize, currentPage * pageSize),
+    [data, currentPage, pageSize]
+  );
+
+  // Reset to page 1 if page size changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [pageSize]);
+
+  const handlePageChange = useCallback(
+    (page) => {
+      setCurrentPage(Math.min(Math.max(page, 1), totalPages));
+    },
+    [totalPages]
+  );
+
+  if (!data.length) return null;
+
   return (
-    <div className="flex w-full flex-col sm:flex-row items-center justify-between px-6 gap-8">
-      {/* Rows per Page */}
-      <div className="hidden lg:flex items-center gap-2">
-        <Label htmlFor="rows-per-page" className="text-sm font-medium">
-          Rows per page
-        </Label>
+    <>
+      {children(paginatedData)}
 
-        <Select
-          value={pageSize.toString()}
-          onValueChange={(val) => onPageSizeChange(Number(val))}
-        >
-          <SelectTrigger id="rows-per-page" className="w-20" size="sm">
-            <SelectValue placeholder={pageSize.toString()} />
-          </SelectTrigger>
-          <SelectContent side="top">
-            {[5, 10, 20, 30].map((size) => (
-              <SelectItem key={size} value={size.toString()}>
-                {size}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      {data.length > defaultPageSize && (
+        <>
+          <Separator />
+          <div className="flex w-full flex-col sm:flex-row items-center justify-between px-6 gap-8">
+            {/* Rows per Page */}
+            <div className="hidden lg:flex items-center gap-2">
+              <Label htmlFor="rows-per-page" className="text-sm font-medium">
+                Rows per page
+              </Label>
 
-      <Pagination className="lg:justify-end">
-        <PaginationContent className="gap-2">
-          <PaginationItem>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => onPageChange(1)}
-              disabled={currentPage === 1}
-            >
-              <ChevronsLeft />
-            </Button>
-          </PaginationItem>
+              <Select
+                value={pageSize.toString()}
+                onValueChange={(val) => setPageSize(Number(val))}
+              >
+                <SelectTrigger id="rows-per-page" className="w-20" size="sm">
+                  <SelectValue placeholder={pageSize.toString()} />
+                </SelectTrigger>
+                <SelectContent side="top">
+                  {[5, 10, 15, 20].map((size) => (
+                    <SelectItem key={size} value={size.toString()}>
+                      {size}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-          <PaginationItem>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => onPageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-            >
-              <ChevronLeft />
-            </Button>
-          </PaginationItem>
+            <Pagination className="lg:justify-end">
+              <PaginationContent className="gap-2">
+                <PaginationItem>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => handlePageChange(1)}
+                    disabled={currentPage === 1}
+                  >
+                    <ChevronsLeft />
+                  </Button>
+                </PaginationItem>
 
-          <PaginationItem>
-            <span className="text-sm text-muted-foreground font-medium mx-2">
-              Page {currentPage} of {totalPages}
-            </span>
-          </PaginationItem>
+                <PaginationItem>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                  >
+                    <ChevronLeft />
+                  </Button>
+                </PaginationItem>
 
-          <PaginationItem>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => onPageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-            >
-              <ChevronRight />
-            </Button>
-          </PaginationItem>
+                <PaginationItem>
+                  <span className="text-sm text-muted-foreground font-medium mx-2">
+                    Page {currentPage} of {totalPages}
+                  </span>
+                </PaginationItem>
 
-          <PaginationItem>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => onPageChange(totalPages)}
-              disabled={currentPage === totalPages}
-            >
-              <ChevronsRight />
-            </Button>
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
-    </div>
+                <PaginationItem>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                  >
+                    <ChevronRight />
+                  </Button>
+                </PaginationItem>
+
+                <PaginationItem>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => handlePageChange(totalPages)}
+                    disabled={currentPage === totalPages}
+                  >
+                    <ChevronsRight />
+                  </Button>
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        </>
+      )}
+    </>
   );
 };
 

@@ -8,8 +8,14 @@ function Dialog({ ...props }) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />;
 }
 
-function DialogTrigger({ ...props }) {
-  return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />;
+function DialogTrigger({ className, ...props }) {
+  return (
+    <DialogPrimitive.Trigger
+      data-slot="dialog-trigger"
+      className="flex items-center gap-1 border rounded-md text-sm font-medium px-4 py-2 bg-muted hover:bg-muted/70 hover:text-emerald-600"
+      {...props}
+    />
+  );
 }
 
 function DialogPortal({ ...props }) {

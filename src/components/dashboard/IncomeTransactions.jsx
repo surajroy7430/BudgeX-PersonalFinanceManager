@@ -1,18 +1,17 @@
-import { Card, CardAction, CardContent, CardTitle } from "@/components/ui/card";
-import { useDispatch } from "react-redux";
+import { memo } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import { deleteIncome } from "../../features/income/incomeSlice";
-import TransactionInfoCard from "../../Cards/dashboard/TransactionInfoCard";
+import { useData } from "@/hooks/use-data";
+import { useActions } from "@/hooks/use-actions";
+import { Button } from "@/components/ui/button";
+import { Card, CardAction, CardContent, CardTitle } from "@/components/ui/card";
+import TransactionInfoCard from "@/Cards/TransactionInfoCard";
 
-const IncomeTransactions = ({ transactions }) => {
+const IncomeTransactions = () => {
+  const { income } = useData();
+  const { handleDelete } = useActions();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
-  const handleDelete = (transaction) => {
-    dispatch(deleteIncome(transaction.id));
-  };
   return (
     <Card className="card">
       <div className="px-6 flex items-center justify-between">
@@ -27,16 +26,15 @@ const IncomeTransactions = ({ transactions }) => {
           </Button>
         </CardAction>
       </div>
+      
       <CardContent className="flex flex-col gap-4">
-        {transactions?.slice(0, 5)?.map((t) => (
+        {income?.slice(0, 5)?.map((icm) => (
           <TransactionInfoCard
-            key={t.id}
-            icon={t.icon}
-            label={t.source}
-            amount={t.amount.toLocaleString("en-IN")}
-            date={t.date}
-            type={t.type}
-            onDelete={() => handleDelete(t)}
+            key={icm.id}
+            data={icm}
+            showMethod={false}
+            showDescription={false}
+            onDelete={() => handleDelete(icm)}
           />
         ))}
       </CardContent>
@@ -44,4 +42,4 @@ const IncomeTransactions = ({ transactions }) => {
   );
 };
 
-export default IncomeTransactions;
+export default memo(IncomeTransactions);

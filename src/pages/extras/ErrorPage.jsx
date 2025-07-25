@@ -1,7 +1,7 @@
+import { useNavigate } from "react-router-dom";
+import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { AlertTriangle } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 
 const ErrorPage = () => {
   const navigate = useNavigate();
@@ -18,9 +18,13 @@ const ErrorPage = () => {
               <span>Error 404</span>
             </h1>
             <p className="text-muted-foreground">
-              The page you were looking for appears to have been moved, deleted or does not exist.
+              The page you were looking for appears to have been moved, deleted
+              or does not exist.
             </p>
-            <Button className="bg-indigo-600 text-white w-[70%] hover:bg-indigo-700 cursor-pointer mt-4" onClick={() => navigate("/")}>
+            <Button
+              className="bg-indigo-600 text-white w-[70%] hover:bg-indigo-700 cursor-pointer mt-4"
+              onClick={() => navigate("/")}
+            >
               Go Home
             </Button>
           </div>

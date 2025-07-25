@@ -1,47 +1,56 @@
+import { memo, useMemo } from "react";
 import {
   AreaChart,
   Area,
   XAxis,
-  YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import CustomTooltip from "./CustomTooltip";
-import { compareAsc, format, parse } from "date-fns";
+import { parseDate } from "@/lib/parseDate";
+import { compareAsc, format } from "date-fns";
+import CustomTooltip from "@/charts/CustomTooltip";
 
 const FinancialAreaChart = ({ data, areaType, daysRange }) => {
-  const grouped = {};
+  const stackedData = useMemo(() => {
+    const grouped = {};
 
-  data.forEach((item) => {
-    const parsedDate = parse(item.date, "dd MMM yyyy", new Date());
-    const dateKey = format(parsedDate, daysRange === "7d" ? "EEE" : "MMM d");
+    data.forEach((item) => {
+      const parsedDate = parseDate(item.date);
+      const dateKey = format(parsedDate, daysRange === "7d" ? "EEE" : "MMM d");
 
-    if (!grouped[dateKey]) {
-      grouped[dateKey] = {
-        name: dateKey,
-        income: 0,
-        expenses: 0,
-        originalDate: parsedDate,
-      };
-    }
+      if (!grouped[dateKey]) {
+        grouped[dateKey] = {
+          name: dateKey,
+          income: 0,
+          expenses: 0,
+          originalDate: parsedDate,
+        };
+      }
 
-    if (item.type === "income") {
-      grouped[dateKey].income += item.amount;
-    } else if (item.type === "expenses") {
-      grouped[dateKey].expenses += item.amount;
-    }
-  });
+      if (item.type === "income") {
+        grouped[dateKey].income += item.amount;
+      } else if (item.type === "expenses") {
+        grouped[dateKey].expenses += item.amount;
+      }
+    });
 
-  const stackedData = Object.values(grouped).sort((a, b) =>
-    compareAsc(a.originalDate, b.originalDate)
+    return Object.values(grouped).sort((a, b) =>
+      compareAsc(a.originalDate, b.originalDate)
+    );
+  }, [data, daysRange]);
+
+  const hasIncome = useMemo(
+    () => stackedData.some((d) => d.income > 0),
+    [stackedData]
+  );
+  const hasExpenses = useMemo(
+    () => stackedData.some((d) => d.expenses > 0),
+    [stackedData]
   );
 
-  const hasIncome = stackedData.some((d) => d.income > 0);
-  const hasExpenses = stackedData.some((d) => d.expenses > 0);
-
   return (
-    <ResponsiveContainer width="100%" height={300}>
+    <ResponsiveContainer width="100%" height={300} className='mt-5'>
       <AreaChart
         data={stackedData}
         stackOffset="zero"
@@ -93,4 +102,4 @@ const FinancialAreaChart = ({ data, areaType, daysRange }) => {
   );
 };
 
-export default FinancialAreaChart;
+export default memo(FinancialAreaChart);

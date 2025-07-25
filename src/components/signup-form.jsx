@@ -1,4 +1,6 @@
 import { cn } from "@/lib/utils";
+import { memo, useCallback, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -19,12 +21,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Link, useNavigate } from "react-router-dom";
-import { auth, db } from "../firebase/firebaseConfig";
+import { Eye, EyeOff } from "lucide-react";
 import { createUserWithEmailAndPassword, signOut } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
-import { Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
+import { auth, db } from "@/firebase/firebaseConfig";
+import { useAuth } from "../context/AuthContext";
 
 const formSchema = z.object({
   name: z.string().trim().min(3),
@@ -32,7 +33,8 @@ const formSchema = z.object({
   password: z.string().trim().min(8),
 });
 
-export function SignupForm({ className, ...props }) {
+const SignupForm = ({ className, ...props }) => {
+  const { setSignupInProgress } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
@@ -46,37 +48,45 @@ export function SignupForm({ className, ...props }) {
     },
   });
 
-  const onSubmit = async (data) => {
-    try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        data.email,
-        data.password
-      );
-      const user = userCredential.user;
+  const onSubmit = useCallback(
+    async (data) => {
+      try {
+        setSignupInProgress(true);
 
-      await setDoc(doc(db, "users", user.uid), {
-        email: data.email,
-        name: data.name,
-      });
+        const userCredential = await createUserWithEmailAndPassword(
+          auth,
+          data.email,
+          data.password
+        );
+        const user = userCredential.user;
 
-      await signOut(auth);
+        await setDoc(doc(db, "users", user.uid), {
+          email: data.email,
+          name: data.name,
+        });
 
-      form.reset();
-      toast.success("Signup successful!", { duration: 1200 });
+        await signOut(auth);
 
-      navigate("/signin", { replace: true });
-    } catch (error) {
-      toast.error(error.message);
-    }
-  };
+        form.reset();
+        toast.success("Signup successful!", { duration: 1200 });
+
+        setSignupInProgress(false);
+
+        navigate("/signin", { replace: true });
+      } catch (error) {
+        setSignupInProgress(false);
+        toast.error(error.message);
+      }
+    },
+    [form, navigate, setSignupInProgress]
+  );
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card className="bg-white/70 text-black shadow-xl backdrop-blur-md backdrop-saturate-150 transition-all duration-300">
+      <Card className="bg-card/80 shadow-xl backdrop-blur-md backdrop-saturate-150 transition-all duration-300">
         <CardHeader className="text-center mb-3">
           <CardTitle className="text-xl font-bold">Create an Account</CardTitle>
-          <CardDescription className="text-black/50">
+          <CardDescription>
             Signup by entering your details below
           </CardDescription>
         </CardHeader>
@@ -100,7 +110,6 @@ export function SignupForm({ className, ...props }) {
                             type="text"
                             placeholder="Min 3 Characters"
                             {...field}
-                            className="selection:bg-gray-700 selection:text-white"
                           />
                         </FormControl>
                       </FormItem>
@@ -114,16 +123,13 @@ export function SignupForm({ className, ...props }) {
                       <FormItem>
                         <FormLabel>Email Address</FormLabel>
                         <FormControl>
-                          <Input
-                            placeholder="m@example.com"
-                            {...field}
-                            className="selection:bg-gray-700 selection:text-white"
-                          />
+                          <Input placeholder="m@example.com" {...field} />
                         </FormControl>
                       </FormItem>
                     )}
                   />
                 </div>
+
                 <FormField
                   control={form.control}
                   name="password"
@@ -148,7 +154,7 @@ export function SignupForm({ className, ...props }) {
                             size="icon"
                             onClick={() => setShowPassword((prev) => !prev)}
                             tabIndex={-1}
-                            className="absolute right-1 top-1/2 -translate-y-1/2 shadow-none text-muted/70 hover:text-muted/50 dark:hover:!bg-accent/0"
+                            className="absolute right-1 top-1/2 -translate-y-1/2 shadow-none hover:bg-accent/0 dark:hover:!bg-accent/0"
                           >
                             {showPassword ? (
                               <EyeOff size={5} />
@@ -163,7 +169,8 @@ export function SignupForm({ className, ...props }) {
                 />
                 <Button
                   type="submit"
-                  className="w-full text-white bg-indigo-600 hover:bg-indigo-700 cursor-pointer p-5"
+                  variant="default"
+                  className="w-full cursor-pointer py-5.5"
                 >
                   Signup
                 </Button>
@@ -173,7 +180,7 @@ export function SignupForm({ className, ...props }) {
                 Already have an account?{" "}
                 <Link
                   to="/signin"
-                  className="hover:text-indigo-700 underline underline-offset-2"
+                  className="text-muted-foreground/70 hover:text-primary underline underline-offset-3"
                 >
                   Sign in
                 </Link>
@@ -184,4 +191,6 @@ export function SignupForm({ className, ...props }) {
       </Card>
     </div>
   );
-}
+};
+
+export default memo(SignupForm);
