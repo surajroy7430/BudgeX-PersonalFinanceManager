@@ -19,7 +19,7 @@ const ThemeAppearance = () => {
         <RadioGroup
           value={selectedTheme}
           onValueChange={(val) => setSelectedTheme(val)}
-          className="flex flex-col md:flex-row items-center md:items-start gap-5 pt-2"
+          className="flex flex-wrap justify-center md:justify-start gap-5 pt-2"
         >
           <div>
             <Label className="flex flex-col [&:has([data-state=checked])>div]:border-primary">
