@@ -8,6 +8,7 @@ import {
 
 const smallLogo = "https://i.ibb.co/zhBGdXDW/small-logo.webp";
 const largeLogo = "https://i.ibb.co/233vjvFm/large-logo.webp";
+const textLogo = "https://i.ibb.co/4nv1dZn3/logo-text.webp";
 
 export function DashboardLogo() {
   const { open, isMobile, toggleSidebar } = useSidebar();
@@ -25,14 +26,19 @@ export function DashboardLogo() {
             size="lg"
             className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
           >
-            <div
-              className={`bg-transparent p-0.5 flex aspect-square items-center justify-center rounded-lg
-              ${!open || isMobile ? "size-8" : "w-24"}`}
-            >
+            <div className="bg-secondary p-0.5 flex aspect-square size-8 items-center justify-center rounded-lg">
               <img
-                src={!open || isMobile ? smallLogo : largeLogo}
+                src={smallLogo}
                 alt="BX"
                 className="h-full w-auto object-contain"
+                loading="lazy"
+              />
+            </div>
+            <div className="flex-1">
+              <img
+                src={textLogo}
+                alt="BudgeX"
+                className="h-4 w-auto object-contain"
                 loading="lazy"
               />
             </div>

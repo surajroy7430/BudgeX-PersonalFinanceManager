@@ -13,9 +13,9 @@ const RecentTransactions = () => {
   const { allTransactions: transactions } = useData();
 
   return (
-    <Card className="card">
+    <Card>
       <div className="flex items-center justify-between px-6">
-        <CardTitle className="text-lg">Recent Transactions</CardTitle>
+        <CardTitle>Recent Transactions</CardTitle>
         <CardAction>
           <Button
             variant="secondary"
@@ -31,7 +31,7 @@ const RecentTransactions = () => {
 
       <PaginationControl data={transactions}>
         {(paginatedData) => (
-          <CardContent className="flex flex-col gap-4">
+          <CardContent className="flex flex-col gap-4 min-h-[380px]">
             {paginatedData?.map((data) => (
               <TransactionInfoCard key={data.id} data={data} onEdit />
             ))}

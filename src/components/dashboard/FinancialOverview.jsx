@@ -2,7 +2,14 @@ import { memo, useMemo } from "react";
 import { useData } from "@/hooks/use-data";
 import { Separator } from "@/components/ui/separator";
 import { TrendingDown, TrendingUp } from "lucide-react";
-import { Card, CardAction, CardContent, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import FinancialAreaChart from "@/charts/FinancialAreaChart";
 
 const FinancialOverview = () => {
@@ -33,35 +40,33 @@ const FinancialOverview = () => {
   ];
 
   return (
-    <Card className="card">
-      <div className="flex flex-col lg:flex-row items-center justify-between px-6">
-        <CardTitle className="text-lg">Financial Overview</CardTitle>
+    <Card className="pt-0">
+      <CardHeader className="flex flex-col items-stretch lg:flex-row space-y-0 border-b [.border-b]:p-0">
+        <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
+          <CardTitle>Financial Overview</CardTitle>
+          <CardDescription>
+            Showing total transactions of all time
+          </CardDescription>
+        </div>
 
-        <CardAction className="self-center">
-          <div className="flex w-full ml-auto">
-            {dataSummary.map(({ label, count, Icon, iconColor }, index) => (
-              <div
-                key={label}
-                className={`flex flex-1 flex-col justify-center gap-1 px-6 py-4 text-center sm:px-4 sm:py-6 min-w-36 ${
-                  index === 0
-                    ? "sm:border-r mt-2 border-gray-100 dark:border-border"
-                    : "mt-2"
-                }`}
-              >
-                <span className="text-xs text-muted-foreground">{label}</span>
-                <span className="flex items-center justify-center gap-2 text-lg font-semibold leading-none sm:text-3xl">
-                  <Icon className={`size-4 ${iconColor}`} />
-                  {count}
-                </span>
-              </div>
-            ))}
-          </div>
-        </CardAction>
-      </div>
+        <div className="flex">
+          {dataSummary.map(({ label, count, Icon, iconColor }) => (
+            <div
+              key={label}
+              className={`flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-center sm:px-8 sm:py-6 
+                even:border-l lg:border-l lg:border-t-0 `}
+            >
+              <span className="text-xs text-muted-foreground">{label}</span>
+              <span className="flex items-center justify-center gap-2 text-lg font-semibold leading-none sm:text-3xl">
+                <Icon className={`size-4 ${iconColor}`} />
+                {count}
+              </span>
+            </div>
+          ))}
+        </div>
+      </CardHeader>
 
-      <Separator />
-
-      <CardContent>
+      <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
         {transactions.length > 0 ? (
           <FinancialAreaChart data={transactions} areaType="step" daysRange />
         ) : (

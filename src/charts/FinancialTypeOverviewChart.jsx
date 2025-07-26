@@ -4,11 +4,11 @@ import { isAfter, subDays } from "date-fns";
 import {
   Card,
   CardContent,
+  CardHeader,
   CardDescription,
   CardTitle,
   CardAction,
 } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { RANGE_OPTIONS, RANGE_OPTIONS_MAP } from "@/constants";
 import FinancialAreaChart from "@/charts/FinancialAreaChart";
@@ -36,10 +36,10 @@ const FinancialTypeOverviewChart = ({ transactions, type }) => {
   }, [transactions, type, daysRange]);
 
   return (
-    <Card className="card">
-      <div className="flex flex-col lg:flex-row items-center justify-between px-6">
-        <div className="text-center lg:text-left mb-3 lg:mb-0">
-          <CardTitle className="text-lg capitalize">{type} Overview</CardTitle>
+    <Card>
+      <CardHeader className="flex flex-col lg:flex-row items-stretch border-b px-6">
+        <div className="flex flex-1 flex-col justify-center">
+          <CardTitle className="capitalize">{type} Overview</CardTitle>
           <CardDescription>
             Visual breakdown of {type} over selected time range.
           </CardDescription>
@@ -69,11 +69,9 @@ const FinancialTypeOverviewChart = ({ transactions, type }) => {
             addTransaction
           )}
         </CardAction>
-      </div>
+      </CardHeader>
 
-      <Separator />
-
-      <CardContent>
+      <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
         {transactions.length > 0 ? (
           <FinancialAreaChart
             data={filteredData}

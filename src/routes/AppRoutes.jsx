@@ -1,18 +1,18 @@
 import { Route, Routes } from "react-router-dom";
 import PublicRoute from "@/routes/PublicRoute";
 import PrivateRoute from "@/routes/PrivateRoute";
-
-import LandingPage from "@/pages/extras/LandingPage";
-import LoginPage from "@/Auth/LoginPage";
-import SignupPage from "@/Auth/SignupPage";
-import ErrorPage from "@/pages/extras/ErrorPage";
-
 import DashboardLayout from "@/layouts/DashboardLayout";
-import HomePage from "@/pages/HomePage";
-import IncomePage from "@/pages/IncomePage";
-import ExpensePage from "@/pages/ExpensePage";
-import Appearance from "@/pages/extras/Appearance";
-import SettingsPage from "@/pages/extras/SettingsPage";
+
+import LandingPage from "../pages/extras/LandingPage";
+import ErrorPage from "../pages/extras/ErrorPage";
+import SignupPage from "../Auth/SignupPage";
+import LoginPage from "../Auth/LoginPage";
+
+import HomePage from "../pages/HomePage";
+import IncomePage from "../pages/IncomePage";
+import ExpensePage from "../pages/ExpensePage";
+import Appearance from "../pages/extras/Appearance";
+import SettingsPage from "../pages/extras/SettingsPage";
 
 const AppRoutes = () => {
   return (

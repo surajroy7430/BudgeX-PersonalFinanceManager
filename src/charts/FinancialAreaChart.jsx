@@ -1,12 +1,6 @@
 import { memo, useMemo } from "react";
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import { AreaChart, Area, XAxis, CartesianGrid } from "recharts";
+import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
 import { parseDate } from "@/lib/parseDate";
 import { compareAsc, format } from "date-fns";
 import CustomTooltip from "@/charts/CustomTooltip";
@@ -50,17 +44,18 @@ const FinancialAreaChart = ({ data, areaType, daysRange }) => {
   );
 
   return (
-    <ResponsiveContainer width="100%" height={300} className='mt-5'>
-      <AreaChart
-        data={stackedData}
-        stackOffset="zero"
-        margin={{ top: 10, right: 10, bottom: 0, left: 20 }}
-      >
-        <CartesianGrid stroke="none" />
-
-        <XAxis dataKey="name" tick={{ fontSize: 12 }} tickLine={false} />
-
-        <Tooltip content={<CustomTooltip />} />
+    <ChartContainer className="aspect-auto h-[300px] w-full">
+      <AreaChart data={stackedData} margin={{ left: 15, right: 15 }}>
+        <CartesianGrid vertical={false} />
+        <XAxis
+          dataKey="name"
+          tickLine={false}
+          axisLine={false}
+          tick={{ fontSize: "11px" }}
+          tickMargin={8}
+          minTickGap={32}
+        />
+        <ChartTooltip content={<CustomTooltip />} cursor={false} />
 
         <defs>
           {hasExpenses && (
@@ -81,7 +76,7 @@ const FinancialAreaChart = ({ data, areaType, daysRange }) => {
           <Area
             type={areaType}
             dataKey="expenses"
-            stackId="1"
+            stackId="a"
             stroke="#dc2626"
             fill="url(#expensesGradient)"
             name="Expenses"
@@ -91,14 +86,14 @@ const FinancialAreaChart = ({ data, areaType, daysRange }) => {
           <Area
             type={areaType}
             dataKey="income"
-            stackId="1"
+            stackId="a"
             stroke="#16a34a"
             fill="url(#incomeGradient)"
             name="Income"
           />
         )}
       </AreaChart>
-    </ResponsiveContainer>
+    </ChartContainer>
   );
 };
 

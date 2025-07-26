@@ -60,13 +60,13 @@ const ExpensesOverview = () => {
       {/* Mode Selector */}
       <CardFooter className="justify-center">
         <Select value={viewMode} onValueChange={setViewMode}>
-          <SelectTrigger className="w-[140px]">
+          <SelectTrigger className="w-[160px]">
             <SelectValue placeholder="View Mode" />
           </SelectTrigger>
 
           <SelectContent>
-            <SelectItem value="single">Single</SelectItem>
-            <SelectItem value="grouped">Grouped</SelectItem>
+            <SelectItem value="single">Normal</SelectItem>
+            <SelectItem value="grouped">Group By Date</SelectItem>
           </SelectContent>
         </Select>
       </CardFooter>

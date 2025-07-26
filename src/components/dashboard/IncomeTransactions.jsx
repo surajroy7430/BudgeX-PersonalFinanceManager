@@ -27,7 +27,7 @@ const IncomeTransactions = () => {
         </CardAction>
       </div>
       
-      <CardContent className="flex flex-col gap-4">
+      <CardContent className="flex flex-col gap-4 min-h-[380px]">
         {income?.slice(0, 5)?.map((icm) => (
           <TransactionInfoCard
             key={icm.id}

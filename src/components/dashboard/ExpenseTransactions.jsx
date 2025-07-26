@@ -27,7 +27,7 @@ const ExpenseTransactions = () => {
         </CardAction>
       </div>
 
-      <CardContent className="flex flex-col gap-4">
+      <CardContent className="flex flex-col gap-4 min-h-[380px]">
         {expenses?.slice(0, 5)?.map((exp) => (
           <TransactionInfoCard
             key={exp.id}
