@@ -80,7 +80,7 @@ const LoginForm = ({ className, ...props }) => {
     });
 
     try {
-      const result = await signInWithRedirect(auth, provider);
+      const result = await signInWithPopup(auth, provider);
       const googleUser = result.user;
 
       const userRef = doc(db, "users", googleUser.uid);
